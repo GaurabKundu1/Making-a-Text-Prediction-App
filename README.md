@@ -188,7 +188,7 @@ So far we have used basic models to understand and predict words. In this next t
 
 5. Can you estimate how uncertain you are about the words you are predicting? 
 
-## Task 6 : Data Product
+## Task 6 : [Data Product]( https://gaurabkundu1.shinyapps.io/Text_Prediction_App/)
 
 The goal of this exercise is to create a product to highlight the prediction algorithm that we have built and to provide an interface that can be accessed by others via a Shiny app..
 
