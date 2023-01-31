@@ -148,7 +148,7 @@ There will likely be a tradeoff that we have to make in between size and runtime
 
 ## Task 4 : Prediction Model
 
-The goal of this exercise is to build and evaluate our first predictive model. We will use the n-gram and backoff models we built in previous tasks to build and evaluate our predictive model. The goal is to make the model efficient and accurate. 
+The goal of this exercise is to build and evaluate our first predictive model. We will use the [n-gram and backoff models](https://github.com/GaurabKundu1/Johns-Hopkins-University-Data-Science-Capstone-Making-a-predictive-text-model/tree/main/Week%202%20Milestone%20Report) we built in previous tasks to build and evaluate our predictive model. The goal is to make the model efficient and accurate. 
 
 ### Tasks to accomplish
 
@@ -165,3 +165,25 @@ The goal of this exercise is to build and evaluate our first predictive model. W
 3. Does perplexity correlate with the other measures of accuracy?
 
 4. Can you reduce the size of the model (number of parameters) without reducing performance?
+
+## Task 5 : Creative Exploration
+
+So far we have used basic models to understand and predict words. In this next task, our goal is to use all the resources we have available to us (from the Data Science Specialization, resources on the web, or our own creativity) to improve the predictive accuracy while reducing computational runtime and model complexity (if we can). Be sure to hold out a test set to evaluate the new, more creative models we are building.
+
+### Tasks to accomplish
+
+- Explore new models and data to improve your predictive model.
+
+- Evaluate your new predictions on both accuracy and efficiency. 
+
+### Questions to consider
+
+1. What are some alternative data sets you could consider using? 
+
+2. What are ways in which the n-gram model may be inefficient?
+
+3. What are the most commonly missed n-grams? Can you think of a reason why they would be missed and fix that? 
+
+4. What are some other things that other people have tried to improve their model? 
+
+5. Can you estimate how uncertain you are about the words you are predicting? 
