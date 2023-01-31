@@ -14,7 +14,7 @@ The first step in analyzing any new data set is figuring out: (a) what data you 
 
 In this project we will be applying data science in the area of natural language processing. As a first step toward working on this project, we should familiarize ourselves with Natural Language Processing, Text Mining, and the associated tools in R. Here are some resources that may be helpful to get started.
 
-[Natural language processing Wikipedia page]("https://en.wikipedia.org/wiki/Natural_language_processing")
+[Natural language processing Wikipedia page](https://en.wikipedia.org/wiki/Natural_language_processing)
 
 Text mining infrastucture in R
 
