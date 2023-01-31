@@ -1,5 +1,7 @@
 # Making a Predictive Text Model
 
+## Author [Gaurab Kundu](https://www.linkedin.com/in/gaurab-kundu/)
+
 ## Project Overview
 
 Around the world, people are spending an increasing amount of time on their mobile devices for email, social networking, banking and a whole range of other activities. But typing on mobile devices can be a serious pain. SwiftKey, our corporate partner in this project, builds a smart keyboard that makes it easier for people to type on their mobile devices. One cornerstone of their smart keyboard is predictive text models. When someone types:
