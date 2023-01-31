@@ -58,14 +58,37 @@ The goal of this task is to get familiar with the databases and do the necessary
 
 Note that the data contain words of offensive and profane meaning. They are left there intentionally to highlight the fact that the developer has to work on them.
 
-### Tasks to accomplish
+### Tasks to Accomplish
 
-1. Tokenization - identifying appropriate tokens such as words, punctuation, and numbers. Writing a function that takes a file as input and returns a tokenized version of it.
+- Tokenization - identifying appropriate tokens such as words, punctuation, and numbers. Writing a function that takes a file as input and returns a tokenized version of it.
 
-2. Profanity filtering - removing profanity and other words you do not want to predict.
+- Profanity filtering - removing profanity and other words you do not want to predict.
 
-### Tips, tricks, and hints
+### Tips, Tricks, and Hints
 
 - <b>Loading the data in</b>. This dataset is fairly large. We emphasize that you don't necessarily need to load the entire dataset in to build your algorithms (see point 2 below). At least initially, you might want to use a smaller subset of the data. Reading in chunks or lines using R's readLines or scan functions can be useful. You can also loop over each line of text by embedding readLines within a for/while loop, but this may be slower than reading in large chunks at a time. Reading pieces of the file at a time will require the use of a file connection in R. For example, the following code could be used to read the first few lines of the English Twitter dataset:con <- file("en_US.twitter.txt", "r") readLines(con, 1) ## Read the first line of text readLines(con, 1) ## Read the next line of text readLines(con, 5) ## Read in the next 5 lines of text close(con) ## It's important to close the connection when you are done. See the connections help page for more information.
 
 - <b>Sampling</b>. To reiterate, to build models you don't need to load in and use all of the data. Often relatively few randomly selected rows or chunks need to be included to get an accurate approximation to results that would be obtained using all the data. Remember your inference class and how a representative sample can be used to infer facts about a population. You might want to create a separate sub-sample dataset by reading in a random subset of the original data and writing it out to a separate file. That way, you can store the sample and not have to recreate it every time. You can use the rbinom function to "flip a biased coin" to determine whether you sample a line of text or not.
+
+## Task 2 : Exploratory Data Analysis
+
+The first step in building a predictive model for text is understanding the distribution and relationship between the words, tokens, and phrases in the text. The goal of this task is to understand the basic relationships you observe in the data and prepare to build your first linguistic models.
+
+### Tasks to accomplish
+
+- Exploratory analysis - perform a thorough exploratory analysis of the data, understanding the distribution of words and relationship between the words in the corpora. 
+
+- Understand frequencies of words and word pairs - build figures and tables to understand variation in the frequencies of words and word pairs in the data.
+
+### Questions to consider
+
+1. Some words are more frequent than others - what are the distributions of word frequencies? 
+
+2. What are the frequencies of 2-grams and 3-grams in the dataset? 
+
+3. How many unique words do you need in a frequency sorted dictionary to cover 50% of all word instances in the language? 90%? 
+
+4. How do you evaluate how many of the words come from foreign languages? 
+
+5. Can you think of a way to increase the coverage -- identifying words that may not be in the corpora or using a smaller number of words in the dictionary to cover the same number of phrases?
+
