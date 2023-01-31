@@ -1,0 +1,229 @@
+---
+title: "Week 2 Milestone Report"
+author: "Gaurab Kundu"
+date: "2023-01-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview
+
+This is the milestone report for week 2 of the Johns Hopkins University on Coursera Data Science Capstone project. The overall goal of the Capstone project is to build a predictive text model using Natural Language Processing (NLM) along with a predictive text application that will determine the most likely next word when a user inputs a word or a phrase.
+
+The purpose of this milestone report is to demonstrate how the data was downloaded, imported into R, and cleaned. This report also contains an exploratory analysis of the data including summary statistics about the three separate data sets (blogs, news and tweets), graphics that illustrate features of the data, interesting findings discovered along the way, and an outline of the next steps that will be taken toward building the predictive application.
+
+# Load the Required Libraries
+
+```{r}
+library(tm)
+library(RWeka)
+library(stringi)
+library(dplyr)
+library(pryr)
+library(RColorBrewer)
+library(ggplot2)
+library(wordcloud)
+library(RCurl)
+
+```
+
+# The Data can be found at
+
+https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip
+
+# Loading the Data
+
+```{r}
+data <- "http://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+unzip("Coursera-Swiftkey.zip")
+
+blogs <- readLines("./final/en_US/en_US.blogs.txt", warn = FALSE, encoding = "UTF-8", skipNul = TRUE)
+news <- readLines("./final/en_US/en_US.news.txt", warn = FALSE, encoding = "UTF-8", skipNul = TRUE)
+twitter <- readLines("./final/en_US/en_US.twitter.txt", warn = FALSE, encoding = "UTF-8", skipNul = TRUE)
+
+```
+
+# Generating Summary Statistics
+
+```{r}
+stats_sum <- data.frame(
+        FileName=c("blogs", "news", "twitter"),
+        FileSize=sapply(list(blogs, news, twitter), function(x){format(object.size(x), "MB")}),
+        # FileSizeMB=c(file.info("./en_US.blogs.txt")$size/1024^2,
+                     #file.info("./en_US.news.txt")$size/1024^2,
+                     #file.info("./en_US.twitter.txt")$size/1024^2),
+        t(rbind(sapply(list(blogs, news, twitter), stri_stats_general),#[c("Lines", "Chars"),],
+        Words = sapply(list(blogs, news, twitter), stri_stats_latex)[4,])
+        )
+)
+
+stats_sum
+```
+
+# Sampling the Data
+
+From the summary, we can see the sizes of the data files are quite large (the smallest file in the set is nearly 160MB). So, we are going to subset the data into three new data files containing a 1% sample of each of the original data files. We are going to start with a 1% sample and check the size of the VCorpus (Virtual Corpus) object that will be loaded into memory.
+
+We will set a seed so the sampling will be reproducible. Before building the corpus, we will create a combined sample file and once again check the summary statistics to make sure the file sizes are not too large.
+
+```{r}
+set.seed(1001)
+sampleSize <- 0.01
+
+blogsSubset <- sample(blogs, length(blogs) * sampleSize)
+newsSubset <- sample(news, length(news) * sampleSize)
+twitterSubset <- sample(twitter, length(twitter) * sampleSize)
+
+sampleData <- c(sample(blogs, length(blogs) * sampleSize),
+                    sample(news, length(news) * sampleSize),
+                    sample(twitter, length(twitter) * sampleSize))
+
+sampleStats <- data.frame(
+        FileName=c("blogsSubset", "newsSubset", "twitterSubset", "sampleData"),
+        FileSize=sapply(list(blogsSubset, newsSubset, twitterSubset, sampleData), function(x){format(object.size(x), "MB")}),
+        t(rbind(sapply(list(blogsSubset, newsSubset, twitterSubset, sampleData), stri_stats_general),#[c("Lines", "Chars"),],
+        Words = sapply(list(blogsSubset, newsSubset, twitterSubset, sampleData), stri_stats_latex)[4,])
+        )
+)
+
+sampleStats
+```
+
+# Building a Corpus and Clean the Data
+
+```{r}
+corpus <- VCorpus(VectorSource(sampleData)) # Build the corpus
+object_size(corpus) # Check the size of corpus
+```
+
+The VCorpus object is quite large (77.8 MB), even when the sample size is only 1%. This may be an issue due to memory constraints when it comes time to build the predictive model. But, we will start here and see where this approach leads us.
+
+We next need to clean the corpus Data using functions from the tm package. Common text mining cleaning tasks include:
+
+- Convert everything to lower case
+
+- Remove punctuation marks, numbers, extra whitespace, and stopwords (common words like “and”, “or”, “is”, “in”, etc.)
+
+- Filtering out unwanted words
+
+```{r}
+cleanCorpus <- tm_map(corpus, content_transformer(tolower)) # Convert all to lower case
+cleanCorpus <- tm_map(cleanCorpus, removePunctuation) # Remove punctuation marks
+cleanCorpus <- tm_map(cleanCorpus, removeNumbers) # Remove numbers
+cleanCorpus <- tm_map(cleanCorpus, stripWhitespace) # Remove whitespace
+cleanCorpus <- tm_map(cleanCorpus, PlainTextDocument) # Convert all to plain text document
+```
+
+# Tokenize and Construct the N-Grams
+
+We next need to tokenize the clean Corpus (i.e., break the text up into words and short phrases) and construct a set of N-grams. We will start with the following three N-Grams:
+
+- Unigram - A matrix containing individual words
+
+- Bigram - A matrix containing two-word patterns
+
+- Trigram - A matrix containing three-word patterns
+
+We could also contrust a Quadgram matrix based on four words, but at this point in the project we have decided to start with the first three N-Grams and see how the predictive model works with these first.
+
+```{r}
+uniTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1))
+biTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
+triTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
+
+uniMatrix <- TermDocumentMatrix(cleanCorpus, control = list(tokenize = uniTokenizer))
+biMatrix <- TermDocumentMatrix(cleanCorpus, control = list(tokenize = biTokenizer))
+triMatrix <- TermDocumentMatrix(cleanCorpus, control = list(tokenize = triTokenizer))
+```
+
+# Calculate the Frequencies of the N-Grams
+
+```{r}
+uniCorpus <- findFreqTerms(uniMatrix, lowfreq = 20)
+biCorpus <- findFreqTerms(biMatrix, lowfreq = 20)
+triCorpus <- findFreqTerms(triMatrix, lowfreq = 20)
+
+uniCorpusFreq <- rowSums(as.matrix(uniMatrix[uniCorpus,]))
+uniCorpusFreq <- data.frame(word = names(uniCorpusFreq), frequency = uniCorpusFreq)
+biCorpusFreq <- rowSums(as.matrix(biMatrix[biCorpus,]))
+biCorpusFreq <- data.frame(word = names(biCorpusFreq), frequency = biCorpusFreq)
+triCorpusFreq <- rowSums(as.matrix(triMatrix[triCorpus,]))
+triCorpusFreq <- data.frame(word = names(triCorpusFreq), frequency = triCorpusFreq)
+```
+
+```{r}
+head(uniCorpusFreq)
+```
+
+```{r}
+head(biCorpusFreq)
+```
+
+```{r}
+head(triCorpusFreq)
+```
+
+# Set the order of each corpus frequency to descending as a preparation step for visualizing the data.
+
+```{r}
+uniCorpusFreqDescend <- arrange(uniCorpusFreq, desc(frequency))
+biCorpusFreqDescend <- arrange(biCorpusFreq, desc(frequency))
+triCorpusFreqDescend <- arrange(triCorpusFreq, desc(frequency))
+```
+
+# Visualizing the Data
+
+## Unibar
+
+```{r}
+uniBar <- ggplot(data = uniCorpusFreqDescend[1:20,], aes(x = reorder(word, -frequency), y = frequency)) +
+        geom_bar(stat = "identity", fill = "magenta") +
+        xlab("Words") +
+        ylab("Frequency") +
+        ggtitle(paste("Top 20 Unigrams")) +
+        theme(plot.title = element_text(hjust = 0.5)) +
+        theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+uniBar
+```
+
+## Bibar
+
+```{r}
+biBar <- ggplot(data = biCorpusFreqDescend[1:20,], aes(x = reorder(word, -frequency), y = frequency)) +
+        geom_bar(stat = "identity", fill = "cyan") +
+        xlab("Words") +
+        ylab("Frequency") +
+        ggtitle(paste("Top 20 Bigrams")) +
+        theme(plot.title = element_text(hjust = 0.5)) +
+        theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+biBar
+```
+
+## Tribar
+
+```{r}
+triBar <- ggplot(data = triCorpusFreqDescend[1:20,], aes(x = reorder(word, -frequency), y = frequency)) +
+        geom_bar(stat = "identity", fill = "yellow") +
+        xlab("Words") +
+        ylab("Frequency") +
+        ggtitle(paste("Top 20 Trigrams")) +
+        theme(plot.title = element_text(hjust = 0.5)) +
+        theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
+triBar
+```
+
+# Summary
+
+- One question I have is whether a 1% sample of the data is enough? I may find I need to increase the sample size, but doing so could affect the performance of the application.
+
+- The VCorpus object is quite large (77.8 MB), even with a sample size of only 1%. This may create issues due to memory constraints when it comes time to build the predictive model.
+
+- We may need to try different sample sizes to get a balance between enough data, memory consumption and acceptable performance.
+
+- We also need to determine whether stopwords need to be removed and create a filter if profane words are suggested when a word or phrase is entered by the user.
