@@ -145,3 +145,23 @@ Here are a few tools that may be of use to us as we work on their algorithm:
 - gc(): this function runs the garbage collector to retrieve unused RAM for R. In the process it tells you how much memory is currently being used by R.
 
 There will likely be a tradeoff that we have to make in between size and runtime. For example, an algorithm that requires a lot of memory, may run faster, while a slower algorithm may require less memory. we will have to find the right balance between the two in order to provide a good experience to the user.
+
+## Task 4 : Prediction Model
+
+The goal of this exercise is to build and evaluate our first predictive model. We will use the n-gram and backoff models we built in previous tasks to build and evaluate our predictive model. The goal is to make the model efficient and accurate. 
+
+### Tasks to accomplish
+
+- Build a predictive model based on the previous data modeling steps - you may combine the models in any way you think is appropriate.
+
+- Evaluate the model for efficiency and accuracy - use timing software to evaluate the computational complexity of your model. Evaluate the model accuracy using different metrics like perplexity, accuracy at the first word, second word, and third word.
+
+### Questions to consider
+
+1. How does the model perform for different choices of the parameters and size of the model?
+
+2. How much does the model slow down for the performance you gain?
+
+3. Does perplexity correlate with the other measures of accuracy?
+
+4. Can you reduce the size of the model (number of parameters) without reducing performance?
