@@ -1,0 +1,34 @@
+---
+title: "Pitch for the Text Predictor App"
+author: "Gaurab Kundu"
+date: "2023-02-01"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+Ever thought how would it be like if you type a word and suddenly get a recommendation for the next word to complete a sentence?
+
+If yes, then this Text Predictor App is just for you.
+
+This App was built using the trained model with Stupid Back Off via N-Grams Algorithm.
+
+N-Grams are used to calculate the probability of a word in text. If a word with prob=0 is encountered, then it goes back to an n-1 gram level where the odds are multiplied by lambda(0.4) so the new probability is calculated as:
+
+0.4 * P(“Desired Output”|“Text Input”)
+
+## The Text Prediction App
+
+<img src="https://user-images.githubusercontent.com/86102231/215984564-daa9bf22-eebf-488b-bd03-c02ba142ed03.png" height=300px width=600px>
+
+To use this app go to  https://gaurabkundu1.shinyapps.io/Text_Prediction_App/ and type a word, and you will get the recommended words below.
+
+## 
+
+To see The Code for the app and presentation go to https://github.com/GaurabKundu1/Johns-Hopkins-University-Data-Science-Capstone-Making-a-predictive-text-model 
+
+# Thank You
