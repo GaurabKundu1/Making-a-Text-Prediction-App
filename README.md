@@ -208,7 +208,7 @@ The goal of this exercise is to create a product to highlight the prediction alg
 
 Consider the size of the predictive model we have developed. We may have to sacrifice some accuracy to have a fast enough/small enough model to load into Shiny. 
 
-## Task 7 : Slide Deck
+## Task 7 : [Slide Deck](https://rpubs.com/GaurabKundu01/997451)
 
 The goal of this exercise is to "pitch" our data product to our boss or an investor. The slide deck is constrained to be 5 slides or less and should: 
 
