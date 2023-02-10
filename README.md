@@ -1,4 +1,4 @@
-# Making a Predictive Text Model
+# Making a Predictive Text Prediction App
 
 ![predictive-text-app-is-so-accurate-you-dont-even-need-look-your-phone-type 1280x600](https://user-images.githubusercontent.com/86102231/217580962-d1b856a1-83bd-4a48-880e-960badbcacc0.jpg)
 
